@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://mainmenu01"]
+[gd_scene load_steps=4 format=3 uid="uid://mainmenu01"]
 
 [ext_resource type="Theme" path="res://themes/app_theme.tres" id="1_theme"]
 [ext_resource type="Script" path="res://scripts/main_menu.gd" id="2_script"]
+[ext_resource type="FontFile" path="res://fonts/ALIBABAPUHUITI-3-115-BLACK.TTF" id="3_title_font"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -50,6 +51,7 @@ theme_override_constants/separation = 18
 
 [node name="Title" type="Label" parent="Center/Card/VBox"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_title_font")
 theme_override_font_sizes/font_size = 46
 theme_override_colors/font_color = Color(0.96, 0.82, 0.42, 1)
 text = "扫雷"
