@@ -1,0 +1,17 @@
+# Godot 4
+.import/
+export_presets.cfg.bak
+*.translation
+
+# 导出产物（由 CI 生成，不必提交）
+build/
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+*~
+
+# 日志
+*.log

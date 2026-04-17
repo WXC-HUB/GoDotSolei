@@ -1,0 +1,23 @@
+[
+	{
+		"id": "beginner",
+		"title": "初级",
+		"width": 9,
+		"height": 9,
+		"mines": 10
+	},
+	{
+		"id": "intermediate",
+		"title": "中级",
+		"width": 16,
+		"height": 16,
+		"mines": 40
+	},
+	{
+		"id": "expert",
+		"title": "高级",
+		"width": 30,
+		"height": 16,
+		"mines": 99
+	}
+]

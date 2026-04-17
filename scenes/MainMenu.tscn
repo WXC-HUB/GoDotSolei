@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=3 uid="uid://mainmenu01"]
+
+[ext_resource type="Script" path="res://scripts/main_menu.gd" id="1_script"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Center/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "扫雷"
+horizontal_alignment = 1
+
+[node name="Start" type="Button" parent="Center/VBox"]
+layout_mode = 2
+text = "开始游戏"
+
+[node name="Quit" type="Button" parent="Center/VBox"]
+layout_mode = 2
+text = "退出"
+
+[connection signal="pressed" from="Center/VBox/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Center/VBox/Quit" to="." method="_on_quit_pressed"]
