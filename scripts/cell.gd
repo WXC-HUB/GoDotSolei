@@ -27,6 +27,10 @@ var _style_open: StyleBoxFlat
 var _style_open_dim: StyleBoxFlat
 var _style_flag: StyleBoxFlat
 var _style_mine: StyleBoxFlat
+var _style_detector: StyleBoxFlat
+var _style_detector_spent: StyleBoxFlat
+var _style_detonator: StyleBoxFlat
+var _style_detonator_spent: StyleBoxFlat
 
 
 func setup(gx: int, gy: int) -> void:
@@ -35,7 +39,6 @@ func setup(gx: int, gy: int) -> void:
 
 
 func _ready() -> void:
-	## flat=true 时引擎常不绘制 normal 的 StyleBox，格子会像消失一样不可见。
 	flat = false
 	focus_mode = Control.FOCUS_NONE
 	custom_minimum_size = Vector2(30, 30)
@@ -61,6 +64,10 @@ func _build_styles() -> void:
 	_style_open_dim = _sb(Color(0.2, 0.22, 0.28), Color(0.32, 0.36, 0.44))
 	_style_flag = _sb(Color(0.42, 0.36, 0.28), Color(0.78, 0.62, 0.35))
 	_style_mine = _sb(Color(0.52, 0.22, 0.26), Color(0.78, 0.35, 0.38))
+	_style_detector = _sb(Color(0.22, 0.42, 0.48), Color(0.4, 0.75, 0.82))
+	_style_detector_spent = _sb(Color(0.26, 0.28, 0.32), Color(0.42, 0.45, 0.52))
+	_style_detonator = _sb(Color(0.42, 0.24, 0.2), Color(0.82, 0.45, 0.32))
+	_style_detonator_spent = _sb(Color(0.28, 0.26, 0.26), Color(0.48, 0.44, 0.44))
 
 
 func _set_tile_style(base: StyleBoxFlat) -> void:
@@ -106,6 +113,24 @@ func update_from_model(m: BoardModel) -> void:
 		text = "●"
 		add_theme_color_override("font_color", Color(1, 0.85, 0.85))
 		_set_tile_style(_style_mine)
+		return
+	if m.get_item(grid_x, grid_y) == BoardModel.ItemType.DETECTOR:
+		text = "探"
+		if m.is_prop_spent(grid_x, grid_y):
+			add_theme_color_override("font_color", Color(0.62, 0.64, 0.68))
+			_set_tile_style(_style_detector_spent)
+		else:
+			add_theme_color_override("font_color", Color(0.65, 0.92, 0.98))
+			_set_tile_style(_style_detector)
+		return
+	if m.get_item(grid_x, grid_y) == BoardModel.ItemType.DETONATOR:
+		text = "爆"
+		if m.is_prop_spent(grid_x, grid_y):
+			add_theme_color_override("font_color", Color(0.65, 0.62, 0.62))
+			_set_tile_style(_style_detonator_spent)
+		else:
+			add_theme_color_override("font_color", Color(1, 0.72, 0.55))
+			_set_tile_style(_style_detonator)
 		return
 	var n: int = m.adjacent_mine_count(grid_x, grid_y)
 	text = str(n) if n > 0 else ""

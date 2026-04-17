@@ -4,20 +4,26 @@
 		"title": "初级",
 		"width": 9,
 		"height": 9,
-		"mines": 10
+		"mines": 10,
+		"detector_chance": 0.1,
+		"detonator_chance": 0.06
 	},
 	{
 		"id": "intermediate",
 		"title": "中级",
 		"width": 16,
 		"height": 16,
-		"mines": 40
+		"mines": 40,
+		"detector_chance": 0.08,
+		"detonator_chance": 0.05
 	},
 	{
 		"id": "expert",
 		"title": "高级",
 		"width": 30,
 		"height": 16,
-		"mines": 99
+		"mines": 99,
+		"detector_chance": 0.06,
+		"detonator_chance": 0.04
 	}
 ]
