@@ -30,6 +30,18 @@ jobs:
           version: 4.3.0
           use-dotnet: false
           include-templates: true
+          # 避免 Actions 缓存键/内容与 chickensoft 逻辑冲突：命中「编辑器」缓存时会跳过模板安装，
+          # 且错误的大体积缓存曾被解压到 workspace，导致 Web 预设报 configuration errors。
+          cache: false
+
+      - name: Verify export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          T="${HOME}/.local/share/godot/export_templates/4.3.stable"
+          ls -la "${HOME}/.local/share/godot/export_templates/" || true
+          test -d "$T" || { echo "缺少 Web 导出模板目录: $T"; exit 1; }
+          ls -la "$T" | head -n 30
 
       - name: Export Web
         shell: bash
