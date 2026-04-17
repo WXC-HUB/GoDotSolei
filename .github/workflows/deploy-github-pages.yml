@@ -17,9 +17,12 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 其余仍基于 Node 20 的 action 会按官方时间表迁移；需要时可提前切到 Node 24
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
@@ -29,13 +32,19 @@ jobs:
           include-templates: true
 
       - name: Export Web
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p build
-          godot --headless --verbose --export-release "Web" "build/index.html"
+          godot --version
+          # 无 GPU 的 Linux runner 上导出需要显式无头显示/静音，否则常直接退出码 1
+          godot --path "${{ github.workspace }}" \
+            --display-driver headless --audio-driver Dummy \
+            --headless --verbose --export-release "Web" "${{ github.workspace }}/build/index.html"
           touch build/.nojekyll
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: build
 
@@ -48,4 +57,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
