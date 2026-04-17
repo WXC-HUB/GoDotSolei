@@ -22,6 +22,9 @@ const FW_TIER_LIGHT := 0
 const FW_TIER_MED := 1
 const FW_TIER_HEAVY := 2
 
+## CanvasLayer 下的 Label 在 Web 上有时拿不到根 Control 的 theme，显式绑定避免「替你挡雷」等大字乱码。
+const _CJK_UI_FONT: Font = preload("res://fonts/ALIBABAPUHUITI-3-105-HEAVY.TTF")
+
 @onready var _margin: MarginContainer = $Margin
 @onready var _card: PanelContainer = $Margin/Card
 @onready var _grid: GridContainer = $Margin/Card/Inner/VBox/Scroll/BoardGrid
@@ -55,8 +58,25 @@ var _fw_spark_tex: Texture2D
 
 
 func _ready() -> void:
+	_bind_cjk_font_for_game_ui_labels()
 	_STRIPE_BG.attach(_bg, 0.27, 17.0)
 	var levels := LevelCatalog.get_levels()
+
+
+func _bind_cjk_font_for_game_ui_labels() -> void:
+	var score_title: Node = get_node_or_null("Margin/Card/Inner/VBox/ScoreRow/ScoreTitle")
+	for n: Node in [
+		_status,
+		_mine_label,
+		_score_value,
+		_combo_strip,
+		score_title,
+		_blocking_label,
+		_combo_splash,
+		_life_splash,
+	]:
+		if n is Label:
+			(n as Label).add_theme_font_override("font", _CJK_UI_FONT)
 	var idx: int = clampi(RunConfig.selected_level_index, 0, maxi(levels.size() - 1, 0))
 	if levels.is_empty():
 		_status.text = "无关卡数据"
