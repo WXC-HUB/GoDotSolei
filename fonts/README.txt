@@ -1,3 +1,7 @@
-本目录可放置「已获授权、可再分发」的 UI 字体文件（例如 .ttf / .otf），并在 autoload/run_config.gd 的 OPTIONAL_BUNDLED_UI_FONT 中填写 res://fonts/你的文件.ttf。
+请将「已获授权、可再分发」的 UI 字体放入本目录并提交到 Git。
 
-不放置任何文件时：项目使用 themes/app_theme.tres 内的 SystemFont（微软雅黑 / 苹方 / Noto CJK 等系统栈），适合本机与 Godot Web 导出；GitHub Actions 会在导出前安装 fonts-noto-cjk 以便 Linux 无头环境能解析中文轮廓。
+当前工程约定：
+- ALIBABAPUHUITI-3-105-HEAVY.TTF — 正文 / 按钮（themes/app_theme.tres、autoload/run_config.gd）
+- ALIBABAPUHUITI-3-115-BLACK.TTF — 主菜单与选关页标题（见 scenes/MainMenu.tscn、LevelSelect.tscn）
+
+切勿只用 SystemFont 做 Web 主题：浏览器里没有「微软雅黑」等系统字体时中文会乱码。若 .TTF 从仓库里消失，请从本机字体目录拷回或重新下载后再提交。

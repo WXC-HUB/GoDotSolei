@@ -19,9 +19,9 @@ Godot 4 扫雷类小游戏，源码托管于 GitHub，**网页版**通过 GitHub
 ## 本地开发与导出
 
 - CI 使用 **Godot 4.3.0** 无头导出；本机可用更高版本（如 4.6.x）开发，一般兼容。
-- **本机 Godot 路径**记在仓库 `tools/EDITOR_PATHS.txt`；PowerShell 自检导入：  
+- **本机 Godot 路径**：可在本地创建 `tools/EDITOR_PATHS.txt`（已 `.gitignore`，勿提交）；PowerShell 自检导入：  
   `powershell -NoProfile -File tools/run_godot_import.ps1`
-- **字体**：主题使用 `SystemFont`（系统/网页栈）+ `RunConfig` 里 `ThemeDB.fallback_font`；可选在 `fonts/` 放入已授权 TTF 并在 `autoload/run_config.gd` 的 `OPTIONAL_BUNDLED_UI_FONT` 填写路径以完全固定字形。说明见 `fonts/README.txt`。
+- **字体**：`fonts/` 下需提交 **阿里巴巴普惠体** `ALIBABAPUHUITI-3-105-HEAVY.TTF` 与 `ALIBABAPUHUITI-3-115-BLACK.TTF`；主题与 `RunConfig` 使用打包 `FontFile`，**勿改回仅 SystemFont**（Web 无系统中文会乱码）。说明见 `fonts/README.txt`。
 - 本地 Web 导出：编辑器 **项目 → 导出**，使用预设 **Web**，导出到任意目录即可调试。
 
 ## Web 导出说明
