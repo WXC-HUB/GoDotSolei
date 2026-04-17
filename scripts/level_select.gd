@@ -5,7 +5,7 @@ const LevelCatalog := preload("res://scripts/level_catalog.gd")
 const MAIN_SCENE := "res://scenes/MainMenu.tscn"
 const GAME_SCENE := "res://scenes/Game.tscn"
 
-@onready var _list: VBoxContainer = $Center/VBox/List
+@onready var _list: VBoxContainer = $Center/Card/VBox/List
 
 
 func _ready() -> void:
@@ -17,6 +17,7 @@ func _ready() -> void:
 		var m: int = int(row.get("mines", 0))
 		var title: String = str(row.get("title", "关卡"))
 		var btn := Button.new()
+		btn.custom_minimum_size = Vector2(400, 48)
 		btn.text = "%s  %d×%d  雷:%d" % [title, w, h, m]
 		var idx := i
 		btn.pressed.connect(func() -> void:

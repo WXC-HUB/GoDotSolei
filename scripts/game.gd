@@ -7,10 +7,10 @@ const CELL_SCENE := preload("res://scenes/Cell.tscn")
 const LEVEL_SELECT := "res://scenes/LevelSelect.tscn"
 const GAME_SCENE := "res://scenes/Game.tscn"
 
-@onready var _grid: GridContainer = $Margin/VBox/Scroll/BoardGrid
-@onready var _status: Label = $Margin/VBox/Toolbar/Status
-@onready var _mine_label: Label = $Margin/VBox/MineLabel
-@onready var _retry: Button = $Margin/VBox/Toolbar/BtnRetry
+@onready var _grid: GridContainer = $Margin/Card/Inner/VBox/Scroll/BoardGrid
+@onready var _status: Label = $Margin/Card/Inner/VBox/Toolbar/Status
+@onready var _mine_label: Label = $Margin/Card/Inner/VBox/MineLabel
+@onready var _retry: Button = $Margin/Card/Inner/VBox/Toolbar/BtnRetry
 
 var _model: BoardModel
 var _cell_nodes: Array = []
@@ -39,6 +39,13 @@ func _ready() -> void:
 			cell.flag_requested.connect(_on_flag)
 			_grid.add_child(cell)
 			_cell_nodes.append(cell)
+	## ScrollContainer 内需要子节点最小尺寸，否则部分布局下棋盘高度会为 0。
+	const CELL_PX := 30
+	const GRID_GAP := 3
+	_grid.custom_minimum_size = Vector2(
+		w * CELL_PX + maxi(w - 1, 0) * GRID_GAP,
+		h * CELL_PX + maxi(h - 1, 0) * GRID_GAP
+	)
 	_retry.disabled = true
 	_status.text = "左键翻开，右键标记"
 	_refresh_mine_label()
