@@ -1,17 +1,23 @@
 extends RefCounted
 
-## 格子内道具：空格、雷、探测器、引爆器（道具不计入邻格雷数）。
-enum ItemType { NONE, MINE, DETECTOR, DETONATOR }
+## 格子内道具：空格、雷、探测器、引爆器、复活卡（道具不计入邻格雷数）。
+enum ItemType { NONE, MINE, DETECTOR, DETONATOR, REVIVE_CARD }
 
 signal changed
 signal lost
 signal won
+signal life_spent(x: int, y: int)
+signal life_gained(x: int, y: int)
 
 var width: int
 var height: int
 var mine_count: int
 var detector_chance: float = 0.08
 var detonator_chance: float = 0.06
+var revive_card_chance: float = 0.05
+
+## 复活卡攒下的命；>0 时踩单格雷消耗一命并立坟，不直接判负。
+var lives: int = 0
 
 var ended: bool = false
 var _mines_placed: bool = false
@@ -20,17 +26,21 @@ var _cells: Array = []
 var _prop_jobs: Array = []
 
 
-func _init(w: int, h: int, mines: int, p_detector_chance: float = 0.08, p_detonator_chance: float = 0.06) -> void:
+func _init(w: int, h: int, mines: int, p_detector_chance: float = 0.08, p_detonator_chance: float = 0.06, p_revive_chance: float = 0.05) -> void:
 	width = w
 	height = h
 	mine_count = mines
 	detector_chance = clampf(p_detector_chance, 0.0, 1.0)
 	detonator_chance = clampf(p_detonator_chance, 0.0, 1.0)
-	var sum := detector_chance + detonator_chance
-	if sum > 1.0:
-		detonator_chance = maxf(0.0, 1.0 - detector_chance)
+	revive_card_chance = clampf(p_revive_chance, 0.0, 1.0)
+	var sum3 := detector_chance + detonator_chance + revive_card_chance
+	if sum3 > 1.0:
+		var scale3: float = 1.0 / sum3
+		detector_chance *= scale3
+		detonator_chance *= scale3
+		revive_card_chance *= scale3
 	for i in range(w * h):
-		_cells.append({ "item": ItemType.NONE, "revealed": false, "flagged": false, "spent": false })
+		_cells.append({ "item": ItemType.NONE, "revealed": false, "flagged": false, "spent": false, "grave": false })
 
 
 func idx(x: int, y: int) -> int:
@@ -55,6 +65,10 @@ func is_flagged(x: int, y: int) -> bool:
 
 func is_prop_spent(x: int, y: int) -> bool:
 	return bool(_cells[idx(x, y)].get("spent", false))
+
+
+func is_grave(x: int, y: int) -> bool:
+	return bool(_cells[idx(x, y)].get("grave", false))
 
 
 func adjacent_mine_count(x: int, y: int) -> int:
@@ -136,14 +150,13 @@ func _place_mines(safe_x: int, safe_y: int) -> void:
 	_mines_placed = true
 
 
-## 非雷格互斥：先探测器概率，再引爆器概率，否则 NONE。
+## 非雷格互斥：探测器 → 引爆器 → 复活卡 → 空。
 func _place_props() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var dc := detector_chance
 	var tc := detonator_chance
-	if dc + tc > 1.0:
-		tc = maxf(0.0, 1.0 - dc)
+	var rc := revive_card_chance
 	for i in range(_cells.size()):
 		var c: Dictionary = _cells[i]
 		if int(c["item"]) == ItemType.MINE:
@@ -153,6 +166,8 @@ func _place_props() -> void:
 			c["item"] = ItemType.DETECTOR
 		elif u < dc + tc:
 			c["item"] = ItemType.DETONATOR
+		elif u < dc + tc + rc:
+			c["item"] = ItemType.REVIVE_CARD
 		else:
 			c["item"] = ItemType.NONE
 
@@ -221,7 +236,9 @@ func _apply_detonator_burst(cx: int, cy: int) -> void:
 			_flood_reveal(nx, ny)
 
 
-func _flood_reveal(x: int, y: int) -> void:
+## 返回本次洪水新翻开的格子数（含触发的探测器/引爆器自身一格，不含队列延后翻开）。
+func _flood_reveal(x: int, y: int) -> int:
+	var opened := 0
 	var stack: Array[Vector2i] = [Vector2i(x, y)]
 	while stack.size() > 0:
 		var p: Vector2i = stack.pop_back()
@@ -237,17 +254,35 @@ func _flood_reveal(x: int, y: int) -> void:
 			continue
 		if int(c["item"]) == ItemType.DETECTOR:
 			_enqueue_detector(px, py)
+			if bool(c["revealed"]):
+				opened += 1
 			continue
 		if int(c["item"]) == ItemType.DETONATOR:
 			_enqueue_detonator(px, py)
+			if bool(c["revealed"]):
+				opened += 1
+			continue
+		if int(c["item"]) == ItemType.REVIVE_CARD:
+			c["revealed"] = true
+			lives += 1
+			life_gained.emit(px, py)
+			opened += 1
+			if adjacent_mine_count(px, py) == 0:
+				for dy in range(-1, 2):
+					for dx in range(-1, 2):
+						if dx == 0 and dy == 0:
+							continue
+						stack.append(Vector2i(px + dx, py + dy))
 			continue
 		c["revealed"] = true
+		opened += 1
 		if adjacent_mine_count(px, py) == 0:
 			for dy in range(-1, 2):
 				for dx in range(-1, 2):
 					if dx == 0 and dy == 0:
 						continue
 					stack.append(Vector2i(px + dx, py + dy))
+	return opened
 
 
 func _check_win() -> bool:
@@ -265,38 +300,55 @@ func _try_emit_win_if_cleared() -> void:
 		won.emit()
 
 
-func reveal(x: int, y: int) -> void:
+## 左键翻开；返回本次操作新翻开的格子数（踩雷为 0，无效操作为 0）。
+func reveal(x: int, y: int) -> int:
 	if ended or not in_bounds(x, y):
-		return
+		return 0
 	var i := idx(x, y)
 	var cell: Dictionary = _cells[i]
 	if bool(cell["revealed"]) or bool(cell["flagged"]):
-		return
+		return 0
 	if not _mines_placed:
 		_place_mines(x, y)
 		_place_props()
 	var item: int = int(cell["item"])
 	if item == ItemType.MINE:
+		if lives > 0:
+			lives -= 1
+			cell["revealed"] = true
+			cell["grave"] = true
+			changed.emit()
+			life_spent.emit(x, y)
+			return 0
 		for k in range(_cells.size()):
 			if int(_cells[k]["item"]) == ItemType.MINE:
 				_cells[k]["revealed"] = true
+				_cells[k]["grave"] = false
 		ended = true
 		changed.emit()
 		lost.emit()
-		return
+		return 0
+	if item == ItemType.REVIVE_CARD:
+		cell["revealed"] = true
+		lives += 1
+		changed.emit()
+		life_gained.emit(x, y)
+		_try_emit_win_if_cleared()
+		return 1
 	if item == ItemType.DETECTOR:
 		_enqueue_detector(x, y)
 		changed.emit()
 		_try_emit_win_if_cleared()
-		return
+		return 1
 	if item == ItemType.DETONATOR:
 		_enqueue_detonator(x, y)
 		changed.emit()
 		_try_emit_win_if_cleared()
-		return
-	_flood_reveal(x, y)
+		return 1
+	var opened := _flood_reveal(x, y)
 	changed.emit()
 	_try_emit_win_if_cleared()
+	return opened
 
 
 func toggle_flag(x: int, y: int) -> void:

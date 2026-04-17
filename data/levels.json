@@ -6,7 +6,8 @@
 		"height": 9,
 		"mines": 10,
 		"detector_chance": 0.1,
-		"detonator_chance": 0.06
+		"detonator_chance": 0.06,
+		"revive_card_chance": 0.05
 	},
 	{
 		"id": "intermediate",
@@ -15,7 +16,8 @@
 		"height": 16,
 		"mines": 40,
 		"detector_chance": 0.08,
-		"detonator_chance": 0.05
+		"detonator_chance": 0.05,
+		"revive_card_chance": 0.045
 	},
 	{
 		"id": "expert",
@@ -24,6 +26,7 @@
 		"height": 16,
 		"mines": 99,
 		"detector_chance": 0.06,
-		"detonator_chance": 0.04
+		"detonator_chance": 0.04,
+		"revive_card_chance": 0.04
 	}
 ]

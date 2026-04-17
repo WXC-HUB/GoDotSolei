@@ -31,6 +31,8 @@ var _style_detector: StyleBoxFlat
 var _style_detector_spent: StyleBoxFlat
 var _style_detonator: StyleBoxFlat
 var _style_detonator_spent: StyleBoxFlat
+var _style_revive: StyleBoxFlat
+var _style_grave: StyleBoxFlat
 
 
 func setup(gx: int, gy: int) -> void:
@@ -68,6 +70,8 @@ func _build_styles() -> void:
 	_style_detector_spent = _sb(Color(0.26, 0.28, 0.32), Color(0.42, 0.45, 0.52))
 	_style_detonator = _sb(Color(0.42, 0.24, 0.2), Color(0.82, 0.45, 0.32))
 	_style_detonator_spent = _sb(Color(0.28, 0.26, 0.26), Color(0.48, 0.44, 0.44))
+	_style_revive = _sb(Color(0.22, 0.38, 0.28), Color(0.42, 0.82, 0.55))
+	_style_grave = _sb(Color(0.26, 0.3, 0.28), Color(0.42, 0.5, 0.44))
 
 
 func _set_tile_style(base: StyleBoxFlat) -> void:
@@ -109,6 +113,13 @@ func update_from_model(m: BoardModel) -> void:
 		_apply_covered_look()
 		add_theme_color_override("font_color", Color(0.92, 0.93, 0.96))
 		return
+	if m.is_grave(grid_x, grid_y) and m.get_item(grid_x, grid_y) == BoardModel.ItemType.MINE:
+		text = "▲"
+		add_theme_color_override("font_color", Color(0.72, 0.78, 0.68))
+		add_theme_color_override("font_hover_color", Color(0.72, 0.78, 0.68))
+		add_theme_color_override("font_pressed_color", Color(0.72, 0.78, 0.68))
+		_set_tile_style(_style_grave)
+		return
 	if m.get_item(grid_x, grid_y) == BoardModel.ItemType.MINE:
 		text = "●"
 		add_theme_color_override("font_color", Color(1, 0.85, 0.85))
@@ -131,6 +142,13 @@ func update_from_model(m: BoardModel) -> void:
 		else:
 			add_theme_color_override("font_color", Color(1, 0.72, 0.55))
 			_set_tile_style(_style_detonator)
+		return
+	if m.get_item(grid_x, grid_y) == BoardModel.ItemType.REVIVE_CARD:
+		text = "命"
+		add_theme_color_override("font_color", Color(0.65, 1.0, 0.82))
+		add_theme_color_override("font_hover_color", Color(0.65, 1.0, 0.82))
+		add_theme_color_override("font_pressed_color", Color(0.65, 1.0, 0.82))
+		_set_tile_style(_style_revive)
 		return
 	var n: int = m.adjacent_mine_count(grid_x, grid_y)
 	text = str(n) if n > 0 else ""

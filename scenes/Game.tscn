@@ -79,6 +79,29 @@ theme_override_font_sizes/font_size = 15
 theme_override_colors/font_color = Color(0.72, 0.76, 0.88, 1)
 text = "剩余标记/雷: 0"
 
+[node name="ScoreRow" type="HBoxContainer" parent="Margin/Card/Inner/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScoreTitle" type="Label" parent="Margin/Card/Inner/VBox/ScoreRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.65, 0.7, 0.82, 1)
+text = "分数"
+
+[node name="ScoreValue" type="Label" parent="Margin/Card/Inner/VBox/ScoreRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.95, 0.92, 0.55, 1)
+text = "0"
+
+[node name="ComboStrip" type="Label" parent="Margin/Card/Inner/VBox/ScoreRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(1, 0.72, 0.38, 1)
+text = "连击 ×0"
+
 [node name="Scroll" type="ScrollContainer" parent="Margin/Card/Inner/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -114,6 +137,46 @@ visible = false
 custom_minimum_size = Vector2(10, 10)
 mouse_filter = 2
 color = Color(1, 0.78, 0.25, 0.95)
+
+[node name="ComboSplash" type="Label" parent="FxLayer"]
+visible = false
+custom_minimum_size = Vector2(360, 96)
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -168.0
+offset_right = -16.0
+offset_bottom = -56.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(1, 0.88, 0.35, 1)
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LifeSplash" type="Label" parent="FxLayer"]
+visible = false
+custom_minimum_size = Vector2(420, 120)
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = -268.0
+offset_right = -12.0
+offset_bottom = -128.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 52
+theme_override_colors/font_color = Color(0.55, 0.98, 1.0, 1)
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="Margin/Card/Inner/VBox/Toolbar/BtnLevel" to="." method="_on_level_select_pressed"]
 [connection signal="pressed" from="Margin/Card/Inner/VBox/Toolbar/BtnRetry" to="." method="_on_retry_pressed"]

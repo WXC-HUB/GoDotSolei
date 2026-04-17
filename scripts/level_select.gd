@@ -1,6 +1,7 @@
 extends Control
 
 const LevelCatalog := preload("res://scripts/level_catalog.gd")
+const _STRIPE_BG := preload("res://scripts/stripe_background.gd")
 
 const MAIN_SCENE := "res://scenes/MainMenu.tscn"
 const GAME_SCENE := "res://scenes/Game.tscn"
@@ -9,6 +10,7 @@ const GAME_SCENE := "res://scenes/Game.tscn"
 
 
 func _ready() -> void:
+	_STRIPE_BG.attach($Bg as ColorRect, 0.23, 20.0)
 	var levels := LevelCatalog.get_levels()
 	for i in range(levels.size()):
 		var row: Dictionary = levels[i]

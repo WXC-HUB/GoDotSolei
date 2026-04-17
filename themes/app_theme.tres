@@ -1,6 +1,15 @@
 [gd_resource type="Theme" load_steps=7 format=3 uid="uid://apptheme01"]
 
-[ext_resource type="FontFile" path="res://fonts/ALIBABAPUHUITI-3-105-HEAVY.TTF" id="1_ui_font"]
+[sub_resource type="SystemFont" id="SystemFont_ui"]
+font_names = PackedStringArray("Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Segoe UI", "sans-serif")
+subpixel_positioning = 1
+multichannel_signed_distance_field = false
+generate_mipmaps = false
+force_autohinter = false
+hinting = 1
+font_weight = 500
+font_stretch = 100
+font_italic = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
 content_margin_left = 20.0
@@ -92,9 +101,9 @@ shadow_size = 12
 shadow_offset = Vector2(0, 4)
 
 [resource]
-default_font = ExtResource("1_ui_font")
+default_font = SubResource("SystemFont_ui")
 default_font_size = 17
-Button/fonts/font = ExtResource("1_ui_font")
+Button/fonts/font = SubResource("SystemFont_ui")
 Button/colors/font_color = Color(0.96, 0.97, 0.99, 1)
 Button/colors/font_hover_color = Color(1, 1, 1, 1)
 Button/colors/font_pressed_color = Color(0.88, 0.92, 0.98, 1)
@@ -104,7 +113,7 @@ Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
 Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
 Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 Button/styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
-Label/fonts/font = ExtResource("1_ui_font")
+Label/fonts/font = SubResource("SystemFont_ui")
 Label/colors/font_color = Color(0.9, 0.91, 0.94, 1)
 Label/font_sizes/font_size = 17
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")

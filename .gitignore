@@ -1,4 +1,5 @@
 # Godot 4
+.godot/
 .import/
 export_presets.cfg.bak
 *.translation
@@ -15,3 +16,6 @@ Thumbs.db
 
 # 日志
 *.log
+
+# 本机 Godot 路径（勿提交）
+tools/EDITOR_PATHS.txt

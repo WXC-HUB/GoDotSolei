@@ -34,6 +34,9 @@ jobs:
           # 且错误的大体积缓存曾被解压到 workspace，导致 Web 预设报 configuration errors。
           cache: false
 
+      - name: Install CJK fonts (Linux headless + SystemFont / 中文轮廓)
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+
       - name: Verify export templates
         shell: bash
         run: |
